@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Valentine's Proposal for Shahala</title>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts for typography -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&amp;family=Quicksand:wght@300;500;700&amp;display=swap" rel="stylesheet"/>
+<style data-purpose="custom-animations">
+    @keyframes floating {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+    .heart-particle {
+      position: fixed;
+      bottom: -10%;
+      pointer-events: none;
+      z-index: 10;
+      animation: floating linear infinite;
+    }
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      15% { transform: scale(1.1); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.15); }
+      60% { transform: scale(1); }
+    }
+    .animate-heartbeat {
+      animation: heartbeat 2s infinite ease-in-out;
+    }
+    .fade-in {
+      animation: fadeIn 1.5s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    body {
+      font-family: 'Quicksand', sans-serif;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-family: 'Dancing Script', cursive;
+    }
+  </style>
+<style data-purpose="background-gradient">
+    .bg-romantic {
+      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e1f5fe 100%);
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body class="bg-romantic flex items-center justify-center p-4">
+<!-- BEGIN: Floating Hearts Container -->
+<div class="fixed inset-0 pointer-events-none" data-purpose="background-animation" id="heart-container"></div>
+<!-- END: Floating Hearts Container -->
+<!-- BEGIN: Main Content Card -->
+<main class="relative z-20 max-w-2xl w-full bg-white/40 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-2xl border border-white/50 text-center fade-in" data-purpose="main-proposal-container" id="proposal-card">
+<!-- Header Section -->
+<header class="mb-8">
+<div class="mb-6 inline-block animate-heartbeat">
+<span class="text-6xl">💝</span>
+</div>
+<h1 class="text-4xl md:text-6xl text-pink-600 mb-4 leading-tight">Shahala… <br/> Will You Be My Valentine?</h1>
+</header>
+<!-- Message Content -->
+<article class="text-gray-700 text-lg md:text-xl leading-relaxed mb-10 space-y-4 font-medium">
+<p class="text-pink-500 font-bold uppercase tracking-widest text-sm">From Sneha to Shahala</p>
+<p>
+        You walked into my life quietly, but somehow became the loudest part of my heart. 
+        Every smile, every late-night talk, every small moment with you means more than I can explain.
+      </p>
+<p>
+        You make my world softer, safer, and happier. So today I just want to ask you something simple…
+      </p>
+<p class="text-2xl text-pink-600 font-bold">
+        Will you be mine this Valentine’s Day? 💖
+      </p>
+</article>
+<!-- Interactive Buttons -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6 relative min-h-[100px]" data-purpose="button-controls">
+<button class="px-10 py-4 bg-pink-500 hover:bg-pink-600 text-white rounded-full text-xl font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 duration-300 z-30" id="yes-btn">
+        Yes 💞
+      </button>
+<button class="px-10 py-4 bg-gray-400 text-white rounded-full text-xl font-bold shadow-lg transition-all duration-200 absolute sm:static" id="no-btn">
+        No 🙈
+      </button>
+</div>
+</main>
+<!-- END: Main Content Card -->
+<!-- BEGIN: Success Celebration Overlay -->
+<div class="fixed inset-0 bg-pink-50/95 z-50 flex flex-col items-center justify-center text-center p-6 hidden overflow-hidden" data-purpose="success-screen" id="success-overlay">
+<div class="max-w-xl">
+<h2 class="text-5xl md:text-7xl text-pink-600 font-bold mb-8 fade-in">Yayyy! 🎉</h2>
+<p class="text-2xl md:text-3xl text-gray-800 leading-relaxed font-semibold fade-in" style="animation-delay: 0.5s;">You just made Sneha the happiest girl alive 💕</p>
+<div class="mt-12 text-8xl animate-heartbeat">🥰</div>
+</div>
+<!-- Internal confetti canvas -->
+<canvas class="absolute inset-0 pointer-events-none" id="confetti-canvas"></canvas>
+</div>
+<!-- END: Success Celebration Overlay -->
+<!-- BEGIN: Audio Controls -->
+<div class="fixed bottom-5 left-5 z-40" data-purpose="audio-player">
+<button class="bg-white/50 backdrop-blur p-3 rounded-full shadow-md hover:bg-white transition-colors" id="music-toggle">
+<span id="audio-icon">🔇</span>
+</button>
+<!-- Romantic Instrumental placeholder -->
+<audio id="bg-music" loop="">
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"/>
+</audio>
+</div>
+<!-- END: Audio Controls -->
+<!-- SCRIPTS -->
+<script data-purpose="floating-hearts">
+    function createHeart() {
+      const container = document.getElementById('heart-container');
+      const heart = document.createElement('div');
+      const size = Math.random() * 20 + 10;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 3 + 3;
+      
+      heart.innerHTML = '❤️';
+      heart.className = 'heart-particle';
+      heart.style.fontSize = `${size}px`;
+      heart.style.left = `${left}%`;
+      heart.style.animationDuration = `${duration}s`;
+      heart.style.opacity = Math.random();
+      
+      container.appendChild(heart);
+      
+      setTimeout(() => {
+        heart.remove();
+      }, duration * 1000);
+    }
+    
+    // Create initial hearts
+    setInterval(createHeart, 300);
+  </script>
+<script data-purpose="no-button-logic">
+    const noBtn = document.getElementById('no-btn');
+    
+    const moveButton = () => {
+      // Calculate random positions within viewport padding
+      const padding = 50;
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding * 2) + padding;
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding * 2) + padding;
+      
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    };
+
+    noBtn.addEventListener('mouseover', moveButton);
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveButton();
+    });
+  </script>
+<script data-purpose="success-celebration">
+    const yesBtn = document.getElementById('yes-btn');
+    const successOverlay = document.getElementById('success-overlay');
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+
+    yesBtn.addEventListener('click', () => {
+      successOverlay.classList.remove('hidden');
+      initConfetti();
+      renderConfetti();
+      
+      // Keep creating hearts rapidly on success
+      const successInterval = setInterval(createHeart, 50);
+      setTimeout(() => clearInterval(successInterval), 5000);
+    });
+
+    // Simple Confetti Logic
+    let particles = [];
+    function initConfetti() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 150,
+          color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+          tilt: Math.random() * 10 - 10
+        });
+      }
+    }
+
+    function renderConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+        ctx.stroke();
+        
+        p.y += Math.cos(p.d) + 1 + p.r / 2;
+        p.tilt = Math.sin(p.d) * 15;
+        
+        if (p.y > canvas.height) {
+          particles[i] = { ...p, y: -20, x: Math.random() * canvas.width };
+        }
+      });
+      requestAnimationFrame(renderConfetti);
+    }
+  </script>
+<script data-purpose="audio-handling">
+    const music = document.getElementById('bg-music');
+    const toggleBtn = document.getElementById('music-toggle');
+    const icon = document.getElementById('audio-icon');
+    let isPlaying = false;
+
+    toggleBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        music.pause();
+        icon.innerText = '🔇';
+      } else {
+        music.play().catch(e => console.log("Audio play blocked by browser. User interaction required."));
+        icon.innerText = '🔊';
+      }
+      isPlaying = !isPlaying;
+    });
+
+    // Auto-play attempt on first click anywhere
+    document.body.addEventListener('click', () => {
+      if(!isPlaying) {
+        // music.play(); // Optional: Uncomment to force play on first interaction
+      }
+    }, { once: true });
+  </script>
+</body></html>
